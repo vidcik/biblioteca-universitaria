@@ -12,8 +12,11 @@
 ## 🚀 Inicio Rápido
 
 git clone https://github.com/vidcik/biblioteca-universitaria.git
+
 cd biblioteca-universitaria
+
 docker compose up --build
+
 
 | Servicio | URL |
 |----------|-----|
