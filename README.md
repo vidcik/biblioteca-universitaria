@@ -37,19 +37,8 @@ docker compose up --build
 
 ## 🏗️ Arquitectura
 
-┌─────────────────────────────────────┐
-│           Docker Compose            │
-│                                     │
-│  ┌──────────┐      ┌─────────────┐  │
-│  │  React   │─────▶│   FastAPI   │  │
-│  │  :3000   │      │   :8000     │  │
-│  └──────────┘      └──────┬──────┘  │
-│                           │         │
-│                    ┌──────▼──────┐  │
-│                    │ PostgreSQL  │  │
-│                    │   :5432     │  │
-│                    └─────────────┘  │
-└─────────────────────────────────────┘
+<img width="295" height="277" alt="image" src="https://github.com/user-attachments/assets/bab16dfc-b303-42fb-8549-1940f06329c6" />
+
 
 ---
 
@@ -97,23 +86,7 @@ docker compose up --build
 
 ## 📁 Estructura del Proyecto
 
-biblioteca/
-├── 🐳 docker-compose.yml
-├── ⚡ backend/
-│   ├── app/
-│   │   ├── routers/        # Endpoints API
-│   │   ├── models/         # Modelos SQLAlchemy
-│   │   ├── auth.py         # JWT + bcrypt
-│   │   └── main.py
-│   └── requirements.txt
-├── 🌐 frontend/
-│   └── src/
-│       ├── pages/          # Vistas React
-│       └── services/       # Llamadas API
-└── 🗄️ db/
-    ├── init.sql            # Esquema completo
-    └── seeds/seed.sql      # Datos de prueba
+<img width="489" height="367" alt="image" src="https://github.com/user-attachments/assets/c1574bf4-0bfc-4d36-bcba-902f22a60176" />
 
----
 
 > Desarrollado como proyecto final de Base de Datos — 2026
