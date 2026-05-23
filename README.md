@@ -14,7 +14,9 @@
 **Requisitos:** Docker Desktop instalado y corriendo
 
 git clone -b main https://github.com/vidcik/biblioteca-universitaria.git
+
 cd biblioteca-universitaria
+
 docker compose up --build
 
 | Servicio | URL |
