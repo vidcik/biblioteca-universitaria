@@ -1,8 +1,41 @@
-# Sistema de Gestión de Biblioteca Universitaria
+# 📚 Biblioteca Universitaria
 
-## Arquitectura General
+> Sistema de gestión de biblioteca desarrollado con FastAPI, React, PostgreSQL y Docker Compose.
 
-```
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
+![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
+
+---
+
+## 🚀 Inicio Rápido
+
+**Requisitos:** Docker Desktop instalado y corriendo
+
+git clone -b main https://github.com/vidcik/biblioteca-universitaria.git
+cd biblioteca-universitaria
+docker compose up --build
+
+| Servicio | URL |
+|----------|-----|
+| 🌐 Frontend | http://localhost:3000 |
+| ⚡ API Docs | http://localhost:8000/docs |
+
+---
+
+## 👤 Credenciales de Prueba
+
+| Rol | Correo | Contraseña |
+|-----|--------|-----------|
+| 🔑 Bibliotecario | admin@biblioteca.edu | password123 |
+| 🎓 Estudiante | juan.perez@estudiante.edu | password123 |
+| 👨‍🏫 Docente | maria.lopez@docente.edu | password123 |
+
+---
+
+## 🏗️ Arquitectura
+
 ┌──────────────────────────────────────────────┐
 │                  Docker Compose               │
 │                                              │
@@ -13,36 +46,11 @@
 │  │  :3000   │   │  :8000   │  └──────────┘  │
 │  └──────────┘   └──────────┘                │
 └──────────────────────────────────────────────┘
-```
-
-## Cómo Desplegar
-
-### Requisitos
-- Docker Desktop instalado
-- Docker Compose v2
-
-### Despliegue en un solo comando
-```bash
-git clone <repo>
-cd biblioteca
-docker compose up --build
-```
-
-Acceder en: http://localhost:3000
-API Docs: http://localhost:8000/docs
-
-### Credenciales de prueba
-| Usuario | Correo | Contraseña | Rol |
-|---------|--------|-----------|-----|
-| Admin | admin@biblioteca.edu | password123 | Bibliotecario |
-| Estudiante | juan.perez@estudiante.edu | password123 | Estudiante |
-| Docente | maria.lopez@docente.edu | password123 | Docente |
 
 ---
 
-## Modelo de Datos (E-R simplificado)
+## 🗄️ Modelo de Datos
 
-```
 CATEGORIAS ──┐
 EDITORIALES ─┤
              ├──▶ LIBROS ◀──── LIBROS_AUTORES ◀──── AUTORES
@@ -56,76 +64,50 @@ EDITORIALES ─┤
                 NOTIFICACIONES
 USUARIOS ──────────────────────────────────────┘
 MULTAS_CONFIG
-```
 
 ### Tablas Principales
 
 | Tabla | Descripción |
 |-------|-------------|
-| `libros` | Catálogo de títulos con ISBN, tipo de préstamo |
-| `ejemplares` | Copias físicas de cada libro (con estado) |
-| `usuarios` | Estudiantes, docentes y bibliotecarios |
-| `prestamos` | Registro de préstamos con estado y multa |
-| `reservas` | Reservas de ejemplares no disponibles |
-| `notificaciones` | Alertas automáticas de vencimiento |
-| `multas_config` | Tarifa diaria configurable |
+| libros | Catálogo de títulos con ISBN y tipo de préstamo |
+| ejemplares | Copias físicas de cada libro |
+| usuarios | Estudiantes, docentes y bibliotecarios |
+| prestamos | Registro de préstamos con estado y multa |
+| reservas | Reservas de ejemplares no disponibles |
+| notificaciones | Alertas automáticas de vencimiento |
+| multas_config | Tarifa diaria configurable |
 
 ---
 
-## Estructura de Contenedores
+## 🗃️ Objetos de Base de Datos
 
-```yaml
-services:
-  db:        PostgreSQL 15 con volumen persistente
-  backend:   FastAPI con hot-reload en desarrollo
-  frontend:  React buildado servido por Nginx
-```
+### 👁️ Vistas
+- v_catalogo — Libros con autores y disponibilidad
+- v_prestamos_activos — Préstamos en curso con condición
+- v_inventario — Stock por estado
 
-### Persistencia
-Los datos persisten entre reinicios gracias al volumen Docker:
-```yaml
-volumes:
-  postgres_data:  # Mapeado a /var/lib/postgresql/data
-```
+### ⚙️ Funciones
+- calcular_multa(prestamo_id) — Retorna multa en pesos
+- fecha_vencimiento_prestamo(ejemplar_id) — Calcula fecha según tipo
 
----
+### 🔧 Procedimientos Almacenados
+- aprobar_prestamo(prestamo_id, bibliotecario_id) — Aprueba y notifica
+- registrar_devolucion(prestamo_id, observacion) — Devuelve y calcula multa
+- ampliar_prestamo(prestamo_id) — Amplía +8 días si no está reservado
 
-## Funcionalidades de Base de Datos
+### ⚡ Trigger
+- trg_notificar_vencimiento — Notificación automática cuando vence en ≤ 2 días
 
-### Vistas
-- `v_catalogo` — Libros con autores, disponibilidad
-- `v_prestamos_activos` — Préstamos en curso con condición
-- `v_inventario` — Stock por estado
-
-### Funciones
-- `calcular_multa(prestamo_id)` — Retorna multa en pesos
-- `fecha_vencimiento_prestamo(ejemplar_id)` — Calcula fecha según tipo
-
-### Procedimientos Almacenados
-- `aprobar_prestamo(prestamo_id, bibliotecario_id)` — Aprueba y notifica
-- `registrar_devolucion(prestamo_id, observacion)` — Devuelve y calcula multa
-- `ampliar_prestamo(prestamo_id)` — Amplía +8 días si no está reservado
-
-### Triggers
-- `trg_notificar_vencimiento` — Crea notificación automática cuando un préstamo vence en ≤2 días
-
-### Funciones de Ventana (Reportes)
-```sql
--- Ranking de libros más prestados
+### 📊 Funciones de Ventana
 RANK() OVER (ORDER BY total_prestamos DESC)
-SUM(total_prestamos) OVER ()          -- total global
-ROUND(... / SUM(...) OVER (), 2)      -- porcentaje
-
--- Estadísticas mensuales con media móvil
-SUM(COUNT(*)) OVER (ORDER BY mes)     -- acumulado
-AVG(COUNT(*)) OVER (
-  ORDER BY mes ROWS BETWEEN 2 PRECEDING AND CURRENT ROW
-)                                      -- promedio 3 meses
-```
+SUM(total_prestamos) OVER ()
+ROUND(... / SUM(...) OVER (), 2)
+SUM(COUNT(*)) OVER (ORDER BY mes)
+AVG(COUNT(*)) OVER (ORDER BY mes ROWS BETWEEN 2 PRECEDING AND CURRENT ROW)
 
 ---
 
-## Roles y Permisos
+## 👥 Roles y Permisos
 
 | Función | Estudiante | Docente | Bibliotecario |
 |---------|:----------:|:-------:|:-------------:|
@@ -133,6 +115,7 @@ AVG(COUNT(*)) OVER (
 | Solicitar préstamo | ✅ | ✅ | — |
 | Reservar ejemplar | ✅ | ✅ | — |
 | Ampliar préstamo | ✅ | ✅ | — |
+| Pagar multa | ✅ | ✅ | — |
 | Aprobar/devolver | — | — | ✅ |
 | Gestionar usuarios | — | — | ✅ |
 | Ver reportes | — | — | ✅ |
@@ -140,30 +123,57 @@ AVG(COUNT(*)) OVER (
 
 ---
 
-## Reglas de Negocio Implementadas
+## 📋 Reglas de Negocio
 
-1. Solo se presta si el usuario está **activo** y el ejemplar está **disponible**
-2. Los préstamos son de **1 día o 8 días** según el libro
-3. Solo se puede ampliar si el ejemplar **no tiene reserva activa**
-4. La multa se calcula automáticamente: `días_retraso × tarifa_diaria ($500 COP/día)`
-5. Al devolver, si hay reserva activa, se completa automáticamente
-6. El bibliotecario debe **aprobar** cada solicitud
+1. Solo se presta si el usuario está activo y el ejemplar está disponible
+2. Duración del préstamo: 1 minuto (demo), 1 día o 8 días
+3. Solo se puede ampliar si el ejemplar no tiene reserva activa
+4. Usuario con multa pendiente no puede solicitar préstamos
+5. La multa la asigna el bibliotecario manualmente al devolver
+6. El bibliotecario debe aprobar cada solicitud
 7. Notificaciones automáticas cuando el vencimiento es ≤ 2 días
 
 ---
 
-## Endpoints API Principales
+## 📡 Endpoints API Principales
 
-```
-POST /api/auth/login              Autenticación
-GET  /api/libros/                 Listar/buscar catálogo
-POST /api/prestamos/solicitar     Solicitar préstamo
-POST /api/prestamos/{id}/aprobar  Aprobar (bibliotecario)
-POST /api/prestamos/{id}/devolver Registrar devolución
-POST /api/prestamos/{id}/ampliar  Ampliar fecha
-POST /api/reservas/               Crear reserva
-GET  /api/reportes/libros-mas-prestados
-GET  /api/reportes/estadisticas-prestamos
-```
+POST /api/auth/login                    Autenticación
+GET  /api/libros/                       Listar/buscar catálogo
+GET  /api/libros/categorias             Listar categorías
+POST /api/libros/                       Crear libro (admin)
+PUT  /api/libros/{id}                   Editar libro (admin)
+DELETE /api/libros/{id}                 Eliminar libro (admin)
+POST /api/prestamos/solicitar           Solicitar préstamo
+POST /api/prestamos/{id}/aprobar        Aprobar (admin)
+POST /api/prestamos/{id}/devolver       Devolver con multa (admin)
+POST /api/prestamos/{id}/ampliar        Ampliar fecha
+POST /api/prestamos/{id}/pagar-multa    Pagar multa
+GET  /api/reportes/libros-mas-prestados Ranking con RANK()
+GET  /api/reportes/estadisticas-prestamos Media móvil 3 meses
 
-Documentación interactiva completa: http://localhost:8000/docs
+Documentación interactiva: http://localhost:8000/docs
+
+---
+
+## 📁 Estructura del Proyecto
+
+biblioteca/
+├── docker-compose.yml
+├── backend/
+│   ├── app/
+│   │   ├── routers/        # Endpoints API
+│   │   ├── models/         # Modelos SQLAlchemy
+│   │   ├── auth.py         # JWT + bcrypt
+│   │   └── main.py
+│   └── requirements.txt
+├── frontend/
+│   └── src/
+│       ├── pages/          # Vistas React
+│       └── services/       # Llamadas API
+└── db/
+    ├── init.sql            # Esquema completo
+    └── seeds/seed.sql      # Datos de prueba
+
+---
+
+> Desarrollado como proyecto final de Base de Datos — 2026
