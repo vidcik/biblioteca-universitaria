@@ -38,34 +38,14 @@ docker compose up --build
 
 ## 🏗️ Arquitectura
 
-┌──────────────────────────────────────────────┐
-│                  Docker Compose               │
-│                                              │
-│  ┌──────────┐   ┌──────────┐  ┌──────────┐  │
-│  │ Frontend │──▶│ Backend  │─▶│   DB     │  │
-│  │  React   │   │ FastAPI  │  │PostgreSQL│  │
-│  │ (Nginx)  │   │ Python   │  │  :5432   │  │
-│  │  :3000   │   │  :8000   │  └──────────┘  │
-│  └──────────┘   └──────────┘                │
-└──────────────────────────────────────────────┘
+<img width="384" height="223" alt="image" src="https://github.com/user-attachments/assets/af0a7a7e-ce14-44da-a20f-def1c7d43b57" />
+
 
 ---
 
 ## 🗄️ Modelo de Datos
 
-CATEGORIAS ──┐
-EDITORIALES ─┤
-             ├──▶ LIBROS ◀──── LIBROS_AUTORES ◀──── AUTORES
-                    │
-                    └──▶ EJEMPLARES
-                               │
-                    ┌──────────┼──────────┐
-                    ▼          ▼          ▼
-                PRESTAMOS   RESERVAS  (estado)
-                    │
-                NOTIFICACIONES
-USUARIOS ──────────────────────────────────────┘
-MULTAS_CONFIG
+<img width="560" height="277" alt="image" src="https://github.com/user-attachments/assets/e3b62b58-ca3e-446b-929d-34ee21451b17" />
 
 ### Tablas Principales
 
@@ -159,23 +139,7 @@ Documentación interactiva: http://localhost:8000/docs
 
 ## 📁 Estructura del Proyecto
 
-biblioteca/
-├── docker-compose.yml
-├── backend/
-│   ├── app/
-│   │   ├── routers/        # Endpoints API
-│   │   ├── models/         # Modelos SQLAlchemy
-│   │   ├── auth.py         # JWT + bcrypt
-│   │   └── main.py
-│   └── requirements.txt
-├── frontend/
-│   └── src/
-│       ├── pages/          # Vistas React
-│       └── services/       # Llamadas API
-└── db/
-    ├── init.sql            # Esquema completo
-    └── seeds/seed.sql      # Datos de prueba
+<img width="467" height="341" alt="image" src="https://github.com/user-attachments/assets/23e38cff-9bef-43dc-bf0a-a9c4d2bf04c7" />
 
----
 
 > Desarrollado como proyecto final de Base de Datos — 2026
